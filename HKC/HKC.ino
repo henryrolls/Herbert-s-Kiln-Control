@@ -1,3 +1,4 @@
+#include <StackArray.h>
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
 
@@ -17,11 +18,21 @@ int LCDRows = 4;
 ///////////
 // I/O Vars
 
-int analogReadPin = 3;     // potentiometer wiper (middle terminal) connected to analog pin 3
-int digitalWritePin = 9;
+int AnalogReadPin = A3;     // potentiometer wiper (middle terminal) connected to analog pin 3
+int DigitalWritePin = 10;
 
-int buttonPins[] = {2,3,4,5,6,7,8,9,10};
-bool buttonStates[8];
+enum {
+  A_Left = 2, A_Right = 6,
+  B_Left = 3, B_Right = 7,
+  C_Left = 4, C_Right = 8,
+  D_Left = 5, D_Right = 9
+};
+
+int Buttons[] = {A_Left, A_Right, B_Left, B_Right, C_Left, C_Right, D_Left, D_Right};
+
+enum { maxButtonCount = sizeof Buttons / sizeof Buttons[0] };
+
+bool ButtonStates[8];
 
 ////////////
 // Kiln Vars
@@ -30,12 +41,12 @@ int CurrentTemp;
 int DeltaTemp;
 
 enum KilnStates {
-  Kiln_Initialising,
-  Kiln_Ready,
-  Kiln_Toasting,
-  Kiln_Cooling,
-  Kiln_Safe,
-  Kiln_Error
+  Kiln_Error = 0,
+  Kiln_Initialising = 1,
+  Kiln_Ready = 2,
+  Kiln_Toasting = 3,
+  Kiln_Cooling = 4,
+  Kiln_Safe = 5
 };
 
 enum KilnStates KilnEvents[] = { Kiln_Initialising };
@@ -48,6 +59,8 @@ void setup() {
 
   SetupIO();
 
+  SetupButtons();
+
 }
 
 
@@ -56,9 +69,15 @@ void setup() {
 
 void SetupIO() {
   //Serial.begin(9600);                 //  setup serial
-  pinMode(digitalWritePin, OUTPUT);   // sets the digital pin as output
+  pinMode(DigitalWritePin, OUTPUT);   // sets the digital pin as output
 
   lcd.begin(LCDColumns,LCDRows); 
+}
+
+void SetupButtons() {
+  for (int i = 0; i < maxButtonCount; ++i) {
+    pinMode(Buttons[i], INPUT);
+  }
 }
 
 ////////////
@@ -78,16 +97,17 @@ void loop() {
 
 bool CheckEvents() {
   bool Updated = false;
-  if (KilnEvents.length > 0) {
+  if (sizeof KilnEvents > 0) {
     Updated=true;
+    //KilnEvents
   }
   return Updated;
 }
 
 void UpdateDisplay() {
 
-  lcd.setCursor(5,0);
-  lcd.print("Main Menu");
+  lcd.setCursor(2,0);
+  lcd.print("Free The Badgers!");
   
 }
 
