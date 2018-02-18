@@ -49,18 +49,33 @@ enum KilnStates {
   Kiln_Safe = 5
 };
 
-enum KilnStates KilnEvents[] = { Kiln_Initialising };
+String KilnStateNames[] = {
+  "Kiln Error",
+  "Kiln Initialising",
+  "Kiln Ready",
+  "Kiln Toasting",
+  "Kiln Cooling",
+  "Kiln Safe"
+};
 
+StackArray <enum KilnStates> KilnEvents;
+
+enum KilnStates CurrentEvent;
 
 ////////
 // Setup
 
 void setup() {
 
+  lcd.autoscroll();
+  
+  KilnEvents.push(Kiln_Initialising);
   SetupIO();
-
   SetupButtons();
 
+
+  KilnEvents.push(Kiln_Ready);
+  KilnEvents.push(Kiln_Safe);
 }
 
 
@@ -90,6 +105,7 @@ void loop() {
     UpdateKiln();
   }
   //RunKiln(String State);
+  delay(2000);
 }
 
 //////////////////////
@@ -97,8 +113,9 @@ void loop() {
 
 bool CheckEvents() {
   bool Updated = false;
-  if (sizeof KilnEvents > 0) {
+  if (!KilnEvents.isEmpty()) {
     Updated=true;
+    CurrentEvent = KilnEvents.pop();
     //KilnEvents
   }
   return Updated;
@@ -107,7 +124,7 @@ bool CheckEvents() {
 void UpdateDisplay() {
 
   lcd.setCursor(2,0);
-  lcd.print("Free The Badgers!");
+  lcd.print(KilnStateNames[CurrentEvent]);
   
 }
 
