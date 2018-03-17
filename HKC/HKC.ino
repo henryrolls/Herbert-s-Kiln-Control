@@ -74,7 +74,7 @@ void setup() {
   SetupButtons();
 
 
-  KilnEvents.push(Kiln_Ready);
+  //KilnEvents.push(Kiln_Ready);
   KilnEvents.push(Kiln_Safe);
 }
 
