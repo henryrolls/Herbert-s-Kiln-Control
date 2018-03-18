@@ -67,15 +67,15 @@ enum KilnStates CurrentEvent;
 
 void setup() {
 
-  lcd.autoscroll();
+  //lcd.autoscroll();
   
-  KilnEvents.push(Kiln_Initialising);
+  KilnEvents.push(Kiln_Ready);
   SetupIO();
   SetupButtons();
 
 
-  //KilnEvents.push(Kiln_Ready);
-  KilnEvents.push(Kiln_Safe);
+  KilnEvents.push(Kiln_Initialising);
+  //KilnEvents.push(Kiln_Safe);
 }
 
 
@@ -122,7 +122,7 @@ bool CheckEvents() {
 }
 
 void UpdateDisplay() {
-
+  lcd.clear();
   lcd.setCursor(2,0);
   lcd.print(KilnStateNames[CurrentEvent]);
   
